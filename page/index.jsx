@@ -1,3 +1,33 @@
+const requestApi = (url, queryParams, data, method = 'GET') => {
+  let reqUrl = url;
+  const reqOptions = {
+    method
+  };
+  if (queryParams) {
+    const queryStr = Object.keys(queryParams).map((key) => `${key}=${queryParams[key]}`).join('&');
+    if (queryStr) {
+      reqUrl += `?${queryStr}`;
+    }
+  }
+  if (data) {
+    reqOptions.headers = {
+      'Content-Type': 'application/json'
+    };
+    reqOptions.body = JSON.stringify(data);
+  }
+  return fetch(reqUrl, reqOptions)
+    .then((res) => res.json())
+    .then((result) => {
+      if (!result || !result.success) {
+        throw new Error(result && result.errMsg);
+      }
+      return result.data;
+    })
+    .catch((err) => {
+      window.alert(err.message);
+    });
+};
+
 const APP = () => {
   const [todoList,setTodoList] = React.useState([]);
   React.useEffect(() => {
